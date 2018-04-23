@@ -1,57 +1,86 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import getData from '../api/getData';
-import data from '../api/data';
+import {Card, CardHeader} from 'material-ui/Card';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Divider from 'material-ui/Divider';
+import Pagination from 'pagination-material-ui';
 
-class App extends Component {
+import articlesData from '../api/data';
+
+// import injectTapEventPlugin from 'react-tap-event-plugin';
+// injectTapEventPlugin();
+
+
+class MainComponent extends React.Component {
   constructor(props, context) {
     super(props, context);
-    getData();
     this.state = {
-      rowsPerPage: [5,10,15],
+      rowsPerPage: [6,12,24],
       rows: [],
-      numberOfRows: 5,
+      numberOfRows: 6,
       page: 1,
-      total: undefined,
-      data: data.response.ITEMS
+      total: undefined
     };
     this.toDate = this.toDate.bind(this);
+    this.updateRows = this.updateRows.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   toDate = time => {
-    var date = new Date();
-    date.setTime(time);
-    return date;
+    var date = new Date(time);
+    return date.toLocaleString();
+  }
+
+  // componentWillMount() {
+  //     articlesData.getRows(this.state)
+  //       .then((updatedState) => {
+  //             this.setState(updatedState);
+  //         });
+  // }
+  //
+  updateRows(state){
+      articlesData.getRows(state)
+          .then((updatedState) => {
+              this.setState(updatedState);
+          });
+  }
+
+  onChange(currentPage, perPage) {
+      // Do some pagination thing here
   }
 
   render() {
-    console.log(this.toDate(1482181200))
-    console.log(this.state.data);
-    var url = 'https://relefopt.ru';
+    var allData = articlesData.response.ITEMS;
     return (
       <div className="App">
-
-        {Object.keys(this.state.data).map((prop, key) =>{
-          return(
-            <div key={key}>
-              <img src={url + this.state.data[prop].PREVIEW_PICTURE_PATH} />
-              {this.state.data[prop].NAME}
-              {
-                this.state.data[prop].DATE
-              }
-            </div>
-          )
-        })}
+        <MuiThemeProvider>
+        <Card>
+            {Object.keys(allData).map((prop, key) =>{
+              return(
+                <div key={key}>
+                  <CardHeader
+                      title={allData[prop].NAME}
+                      subtitle={this.toDate(allData[prop].DATE)}
+                      avatar={'https://relefopt.ru' + allData[prop].PREVIEW_PICTURE_PATH}
+                  />
+                </div>
+              )
+            })}
+            <Pagination total={100} perPage={10} onChange={this.onChange}/>
+            {/*<Pagination*/}
+                {/*total={this.state.total}*/}
+                {/*rowsPerPage={this.state.rowsPerPage}*/}
+                {/*page={this.state.page}*/}
+                {/*numberOfRows={this.state.numberOfRows}*/}
+                {/*updateRows={this.updateRows}*/}
+            {/*/>*/}
+        </Card>
+        </MuiThemeProvider>
       </div>
     );
   }
 }
 
-const mapStateToProps = function (store) {
-  return {
-    articleReducer: store['articleReducer'].data
-  }
-};
-export default withRouter(connect(mapStateToProps)(App));
+export default MainComponent;
 

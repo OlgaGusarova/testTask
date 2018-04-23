@@ -8,14 +8,10 @@ import store from './redux/Store';
 
 const history = createBrowserHistory();
 
-class App extends Component {
+class App extends React.Component {
   render() {
-    return (
-      <Provider store={store}>
-        <Router history={history}>
-          <MainComponent/>
-        </Router>
-      </Provider>
+    return(
+        <null/>
     );
   }
 }
