@@ -46,7 +46,7 @@ class ArticleDescription extends React.Component {
             <Card className={classes.card} key={key}>
               <CardMedia
                 className={classes.media}
-                image={'https://relefopt.ru' + this.props.allData[prop].PREVIEW_PICTURE_PATH}
+                image={'https://relefopt.ru' + this.props.allData[prop].PREVIEW_PATH}
                 title="Article Image"
               />
               <CardContent>

@@ -95,7 +95,7 @@ class MainComponent extends React.Component {
             return(
               <ListItem key={key}>
                 <Avatar>
-                  <img src={'https://relefopt.ru' + this.props.allData[prop].PREVIEW_PICTURE_PATH} alt='articleImg' />
+                  <img src={'https://relefopt.ru' + this.props.allData[prop].PREVIEW_PATH} alt='articleImg' />
                 </Avatar>
                 <ListItemText primary={this.props.allData[prop].NAME} secondary={this.toDate(this.props.allData[prop].DATE)} />
                 <a href={'/' + this.props.allData[prop].ID} >подробнее</a>
