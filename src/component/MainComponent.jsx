@@ -1,30 +1,31 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import {Card, CardHeader} from 'material-ui/Card';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Divider from 'material-ui/Divider';
-import Pagination from 'pagination-material-ui';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
+import List, { ListItem, ListItemText } from 'material-ui/List';
+import Avatar from 'material-ui/Avatar';
+import { TablePagination } from 'material-ui/Table';
 
+import TablePaginationActionsWrapped from './TablePaginationAction';
 import articlesData from '../api/data';
 
-// import injectTapEventPlugin from 'react-tap-event-plugin';
-// injectTapEventPlugin();
-
+const styles = theme => ({
+  root: {
+    width: '50%',
+    maxWidth: 800,
+    margin: '0 auto',
+    backgroundColor: theme.palette.background.paper,
+  },
+});
 
 class MainComponent extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      rowsPerPage: [6,12,24],
-      rows: [],
-      numberOfRows: 6,
-      page: 1,
-      total: undefined
+      rowsPerPage: 6,
+      page: 0,
+      rowsPerPageOptions: [6, 10, 16]
     };
     this.toDate = this.toDate.bind(this);
-    this.updateRows = this.updateRows.bind(this);
-    this.onChange = this.onChange.bind(this);
   }
 
   toDate = time => {
@@ -32,55 +33,51 @@ class MainComponent extends React.Component {
     return date.toLocaleString();
   }
 
-  // componentWillMount() {
-  //     articlesData.getRows(this.state)
-  //       .then((updatedState) => {
-  //             this.setState(updatedState);
-  //         });
-  // }
-  //
-  updateRows(state){
-      articlesData.getRows(state)
-          .then((updatedState) => {
-              this.setState(updatedState);
-          });
-  }
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
 
-  onChange(currentPage, perPage) {
-      // Do some pagination thing here
-  }
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
   render() {
-    var allData = articlesData.response.ITEMS;
+    const { classes } = this.props;
+    const allData = articlesData.response.ITEMS;
+    const { rowsPerPage, page, rowsPerPageOptions } = this.state;
     return (
-      <div className="App">
-        <MuiThemeProvider>
-        <Card>
-            {Object.keys(allData).map((prop, key) =>{
+      <div  className={classes.root}>
+        <List>
+            {Object.keys(allData).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((prop, key) =>{
               return(
-                <div key={key}>
-                  <CardHeader
-                      title={allData[prop].NAME}
-                      subtitle={this.toDate(allData[prop].DATE)}
-                      avatar={'https://relefopt.ru' + allData[prop].PREVIEW_PICTURE_PATH}
-                  />
-                </div>
+                <ListItem key={key}>
+                  <Avatar>
+                    <img src={'https://relefopt.ru' + allData[prop].PREVIEW_PICTURE_PATH} />
+                  </Avatar>
+                  <ListItemText primary={allData[prop].NAME} secondary={this.toDate(allData[prop].DATE)} />
+                </ListItem>
               )
             })}
-            <Pagination total={100} perPage={10} onChange={this.onChange}/>
-            {/*<Pagination*/}
-                {/*total={this.state.total}*/}
-                {/*rowsPerPage={this.state.rowsPerPage}*/}
-                {/*page={this.state.page}*/}
-                {/*numberOfRows={this.state.numberOfRows}*/}
-                {/*updateRows={this.updateRows}*/}
-            {/*/>*/}
-        </Card>
-        </MuiThemeProvider>
+          <TablePagination
+            colSpan={3}
+            count={Object.keys(allData).length}
+            labelRowsPerPage="Строк на странице:"
+            rowsPerPageOptions={rowsPerPageOptions}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            Actions={TablePaginationActionsWrapped}
+          />
+        </List>
       </div>
     );
   }
 }
 
-export default MainComponent;
+MainComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(MainComponent);
 
