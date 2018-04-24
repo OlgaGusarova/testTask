@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 import createBrowserHistory from 'history/createBrowserHistory';
 import './App.css';
-import MainComponent from './component/MainComponent';
+import MainRouter from './component/MainRouter';
 import store from './redux/Store';
 
 const history = createBrowserHistory();
@@ -11,7 +11,11 @@ const history = createBrowserHistory();
 class App extends React.Component {
   render() {
     return(
-        <null/>
+      <Provider store={store}>
+        <Router history={history}>
+          <MainRouter/>
+        </Router>
+      </Provider>
     );
   }
 }
