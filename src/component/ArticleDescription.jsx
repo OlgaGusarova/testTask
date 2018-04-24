@@ -12,7 +12,7 @@ import articlesData from '../api/data';
 const styles = {
   card: {
     margin: '0 auto',
-    maxWidth: 345,
+    maxWidth: 500,
   },
   media: {
     height: 0,
